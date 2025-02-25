@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { mdiArrowUp } from '@mdi/js';
-import Icon from '@/components/Icon.vue';
+import BaseIcon from '@/components/BaseIcon.vue';
 import TextBox from '@/components/TextBox.vue';
 </script>
 <template>
@@ -15,7 +15,7 @@ import TextBox from '@/components/TextBox.vue';
         title="发送"
         class="w-10 h-10 text-center transition-colors rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 flex items-center justify-center"
       >
-        <Icon :path="mdiArrowUp" size="30" />
+        <BaseIcon :path="mdiArrowUp" size="30" />
       </button>
     </div>
   </div>

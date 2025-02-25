@@ -15,7 +15,6 @@
     "vueIndentScriptAndStyle": false,
     "endOfLine": "auto",
     "semi": true,
-    "usePrettierrc": true,
     "overrides": [
         {
             "files": "*.json",

@@ -4,7 +4,7 @@ import FooterBar from '@/components/FooterBar.vue';
 
 <template>
   <div class="min-h-screen w-screen flex flex-col">
-    <slot></slot>
+    <slot />
     <FooterBar />
   </div>
 </template>
