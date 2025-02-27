@@ -8,8 +8,13 @@ const name = '智能辅导员';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('../views/HomeView.vue'),
+    component: import('../views/HomeView.vue'),
     meta: { title: '新建对话' }
+  },
+  {
+    path: '/chat/:id',
+    component: () => import('../views/ChatView.vue'),
+    meta: { title: '聊天' }
   },
   {
     path: '/:any',
