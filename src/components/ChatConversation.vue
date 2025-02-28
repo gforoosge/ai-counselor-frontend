@@ -3,7 +3,8 @@ import ChatMessage from '@/components/ChatMessage.vue';
 </script>
 
 <template>
-  <div class="overflow-y-scroll h-full">
-    <ChatMessage />
+  <div class="w-full">
+    <ChatMessage role="user" text="Question." />
+    <ChatMessage role="assistant" text="Anwser." />
   </div>
 </template>

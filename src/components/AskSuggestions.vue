@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import BaseIcon from '@/components/BaseIcon.vue';
 import { mdiRefresh } from '@mdi/js';
 import { ref } from 'vue';
-import BaseIcon from './BaseIcon.vue';
 
 const emit = defineEmits(['click']);
 const data = [

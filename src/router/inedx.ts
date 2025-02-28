@@ -1,3 +1,5 @@
+import ChatView from '@/views/ChatView.vue';
+import HomeView from '@/views/HomeView.vue';
 import {
   createRouter,
   createWebHashHistory,
@@ -8,12 +10,13 @@ const name = '智能辅导员';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: import('../views/HomeView.vue'),
+    component: HomeView,
     meta: { title: '新建对话' }
   },
   {
+    name: 'chat',
     path: '/chat/:id',
-    component: () => import('../views/ChatView.vue'),
+    component: ChatView,
     meta: { title: '聊天' }
   },
   {

@@ -1,7 +1,18 @@
 import eslintPluginPrettier from 'eslint-plugin-prettier/recommended';
 import pluginVue from 'eslint-plugin-vue';
+import tsEslint from 'typescript-eslint';
 
 export default [
+  {
+    languageOptions: {
+      parser: tsEslint.parser,
+      parserOptions: {
+        project: 'tsconfig.json',
+        sourceType: 'module',
+        extraFileExtensions: ['.vue']
+      }
+    }
+  },
   ...pluginVue.configs['flat/recommended'],
   {
     // root: true,
