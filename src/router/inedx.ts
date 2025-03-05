@@ -2,7 +2,7 @@ import ChatView from '@/views/ChatView.vue';
 import HomeView from '@/views/HomeView.vue';
 import {
   createRouter,
-  createWebHashHistory,
+  createWebHistory,
   type RouteRecordRaw
 } from 'vue-router';
 
@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
 
 const router = createRouter({
   routes: routes,
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   scrollBehavior(_to, _from, savedPosition) {
     return savedPosition || { top: 0 };
   }

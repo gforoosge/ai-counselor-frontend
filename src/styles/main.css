@@ -4,7 +4,3 @@ div#app,
 body {
   @apply w-full h-full;
 }
-
-@theme {
-  --color-hfut: #833030;
-}

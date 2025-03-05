@@ -1,12 +1,11 @@
 import eslintPluginPrettier from 'eslint-plugin-prettier/recommended';
 import pluginVue from 'eslint-plugin-vue';
-import tsEslint from 'typescript-eslint';
 
 export default [
   {
     languageOptions: {
-      parser: tsEslint.parser,
       parserOptions: {
+        parser: '@typescript-eslint/parser',
         project: 'tsconfig.json',
         sourceType: 'module',
         extraFileExtensions: ['.vue']
@@ -17,6 +16,8 @@ export default [
   {
     // root: true,
     rules: {
+      'vue/no-v-html': 'off',
+      'vue/no-parsing-error': 'off',
       'vue/valid-template-root': 'off',
       'vue/no-multiple-template-root': 'off',
       'vue/multi-word-component-names': [

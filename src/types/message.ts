@@ -1,6 +1,8 @@
+import { Ref } from 'vue';
+
 export type Messages = Message[];
 
 export type Message = {
-  content: string;
-  role: 'user' | 'assistant' | 'system';
+  content: Ref<string> | string;
+  role: 'assistant' | 'user' | 'system';
 };

@@ -1,39 +1,66 @@
 import { Messages } from '@/types/message.ts';
-import axios from 'axios';
-import { ref, Ref } from 'vue';
+import { reactive, ref } from 'vue';
 
-const instance = axios.create({
-  baseURL: '/api/'
-});
+const map = new Map<string, IConversation>();
 
-export async function createNewConversation(): Promise<Conversation> {
+export async function createNewConversation(): Promise<IConversation> {
   const uuid = '2377aa0f-2c8f-4a40-b6e6-4fcb75d309b2';
-  return new Conversation(uuid);
+  const conversation = new Conversation(uuid);
+  map.set(uuid, conversation);
+  return conversation;
 }
 
-export async function getConversation(id: string): Promise<Conversation> {
-  // 尝试获取历史
-  return new Conversation(id);
+export async function getConversation(id: string): Promise<IConversation> {
+  return map.get(id) ?? new Conversation(id);
 }
 
-class Conversation {
-  public id: string;
-  public history: Ref<Messages>;
+export interface IConversation {
+  readonly id: string;
+  readonly history: Messages;
+  chat(prompt: string, abortController?: AbortController): Promise<void>;
+}
 
-  constructor(id: string, history?: Messages) {
+class Conversation implements IConversation {
+  public readonly id: string;
+  public readonly history: Messages;
+
+  constructor(id: string, history: Messages = []) {
     this.id = id;
-    this.history = ref(history || []);
+    this.history = reactive([...history]);
   }
 
-  public async chat(text: string, stream: boolean = false) {
-    if (stream) {
-      throw 'Not implemented';
+  public async chat(
+    prompt: string,
+    abortController?: AbortController
+  ): Promise<void> {
+    this.history.push({ content: prompt, role: 'user' });
+
+    const reply = ref('');
+    this.history.push({ content: reply, role: 'assistant' });
+
+    const response = await fetch(
+      '/api/invoke?query=' + encodeURIComponent(prompt),
+      {}
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch response from server');
     }
 
-    return (
-      await instance.get<{ response: string }>('/chat', {
-        params: { query: text }
-      })
-    ).data.response;
+    const decoder = new TextDecoder('utf-8');
+    const reader = response.body.getReader();
+
+    let done = false;
+
+    while (!done) {
+      if (abortController?.signal.aborted) {
+        reader.cancel();
+        throw new Error('Request aborted');
+      }
+
+      const { value, done: _done } = await reader.read();
+      reply.value += decoder.decode(value, { stream: true });
+      done = _done;
+    }
   }
 }
