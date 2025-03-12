@@ -1,5 +1,6 @@
 import ChatView from '@/views/ChatView.vue';
 import HomeView from '@/views/HomeView.vue';
+import LoginView from '@/views/LoginView.vue';
 import {
   createRouter,
   createWebHistory,
@@ -18,6 +19,12 @@ const routes: RouteRecordRaw[] = [
     path: '/chat/:id',
     component: ChatView,
     meta: { title: '聊天' }
+  },
+  {
+    name: 'login',
+    path: '/account/login',
+    component: LoginView,
+    meta: { title: '登录' }
   },
   {
     path: '/:any',

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import AskSuggestions from '@/components/AskSuggestions.vue';
 import AskTextBox from '@/components/AskTextBox.vue';
-import FooterBar from '@/components/FooterBar.vue';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import router from '@/router/inedx';
 import { createNewConversation } from '@/services/conversations';
@@ -26,6 +25,5 @@ async function submit() {
       />
       <AskSuggestions @click="(t) => (text = t)" />
     </div>
-    <FooterBar />
   </DefaultLayout>
 </template>
