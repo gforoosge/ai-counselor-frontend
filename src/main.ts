@@ -1,11 +1,14 @@
+import App from '@/App.vue';
+import router from '@/router/index.ts';
+import { useAccountStore } from '@/stores/account.ts';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router/inedx.ts';
 
-import './styles/main.css';
+import '@/styles/main.css';
 
 const pinia = createPinia();
+useAccountStore(pinia);
+
 const app = createApp(App);
 
 app.use(router);

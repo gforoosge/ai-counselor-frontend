@@ -1,23 +1,47 @@
 import { Messages } from '@/types/message.ts';
-import { reactive, ref } from 'vue';
+import { Axios } from 'axios';
+import { reactive, Ref, ref } from 'vue';
 
+const client = new Axios();
 const map = new Map<string, IConversation>();
 
-export async function createNewConversation(): Promise<IConversation> {
-  const uuid = '2377aa0f-2c8f-4a40-b6e6-4fcb75d309b2';
-  const conversation = new Conversation(uuid);
-  map.set(uuid, conversation);
+export async function createNewConversation(
+  prompt: string
+): Promise<IConversation> {
+  const response = await fetch('/api/chats', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: prompt })
+  });
+
+  const id = response.headers.get('chat-id');
+  const conversation = new Conversation(id);
+  conversation.history.push({ content: prompt, role: 'user' });
+
+  const reply = ref('');
+  conversation.history.push({ content: reply, role: 'assistant' });
+
+  readAsStreamResponse(response, reply); // don't wait for completion
+
   return conversation;
 }
 
 export async function getConversation(id: string): Promise<IConversation> {
-  return map.get(id) ?? new Conversation(id);
+  if (map.has(id)) {
+    return map.get(id);
+  }
+
+  const conversation = new Conversation(id);
+  return conversation;
 }
 
 export interface IConversation {
   readonly id: string;
   readonly history: Messages;
+
   chat(prompt: string, abortController?: AbortController): Promise<void>;
+
+  refresh(): Promise<void>;
 }
 
 class Conversation implements IConversation {
@@ -26,7 +50,7 @@ class Conversation implements IConversation {
 
   constructor(id: string, history: Messages = []) {
     this.id = id;
-    this.history = reactive([...history]);
+    this.history = reactive(history);
   }
 
   public async chat(
@@ -38,29 +62,48 @@ class Conversation implements IConversation {
     const reply = ref('');
     this.history.push({ content: reply, role: 'assistant' });
 
-    const response = await fetch(
-      '/api/invoke?query=' + encodeURIComponent(prompt),
-      {}
-    );
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: prompt })
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch response from server');
     }
 
-    const decoder = new TextDecoder('utf-8');
-    const reader = response.body.getReader();
+    await readAsStreamResponse(response, reply, abortController);
+  }
 
-    let done = false;
+  public async refresh(): Promise<void> {
+    this.history.slice(0, this.history.length);
 
-    while (!done) {
-      if (abortController?.signal.aborted) {
-        reader.cancel();
-        throw new Error('Request aborted');
-      }
+    const messages = (await client.get<Messages>('/api/chats/' + this.id)).data;
+    for (const message of messages) {
+      this.history.push(message);
+    }
+  }
+}
 
-      const { value, done: _done } = await reader.read();
-      reply.value += decoder.decode(value, { stream: true });
-      done = _done;
+async function readAsStreamResponse(
+  response: Response,
+  ref: Ref<string>,
+  abortController?: AbortController
+): Promise<void> {
+  const decoder = new TextDecoder('utf-8');
+  const reader = response.body.getReader();
+
+  while (true) {
+    if (abortController?.signal.aborted) {
+      reader.cancel();
+      throw new Error('Request aborted');
+    }
+
+    const { value, done: _done } = await reader.read();
+    ref.value += decoder.decode(value, { stream: true });
+
+    if (!_done) {
+      break;
     }
   }
 }

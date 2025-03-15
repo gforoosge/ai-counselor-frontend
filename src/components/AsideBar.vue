@@ -5,15 +5,15 @@ import HistoryItem from '@/components/HistoryItem.vue';
 const history = [
   { id: '1', title: '1' },
   { id: '2', title: '2' },
-  { id: '3', title: '3' }
+  { id: '3', title: '31111111111111111 11111111111111111' }
 ];
 </script>
 
 <template>
   <aside
-    class="w-60 h-screen bg-neutral-50 fixed top-0 -left-60 md:left-0 flex flex-col py-10 px-5 transition-[left]"
+    class="w-60 h-screen bg-neutral-100 fixed top-0 -left-60 md:left-0 flex flex-col py-10 px-5 transition-[left]"
   >
-    <div class="text-xl font-bold mb-5">对话记录</div>
+    <div class="text-xl font-bold mb-5 ml-2 select-none">对话记录</div>
 
     <div v-if="history.length" class="h-full overflow-y-auto">
       <HistoryItem

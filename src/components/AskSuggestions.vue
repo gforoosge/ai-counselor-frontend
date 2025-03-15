@@ -47,7 +47,7 @@ function update() {
     <div class="text-center mt-2 text-md">
       <button
         type="button"
-        class="cursor-pointer bg-gray-50 hover:bg-gray-100 active:bg-gray-200 transition-all rounded-full p-2"
+        class="bg-gray-50 hover:bg-gray-100 active:bg-gray-200 transition-all rounded-full p-2"
         @click="update"
       >
         <BaseIcon :path="mdiRefresh" />

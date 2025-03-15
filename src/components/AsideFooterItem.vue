@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <RouterLink class="my-3" :to="to">
-    <div class="flex items-center hover:text-gray-500">
+    <div class="flex items-center hover:text-gray-500 select-none">
       <BaseIcon :path="icon" />
       <span class="ml-2">{{ text }}</span>
     </div>

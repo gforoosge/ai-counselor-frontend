@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import router from '@/router/inedx';
+import router from '@/router';
 import { computed } from 'vue';
-import { RouterLink } from 'vue-router';
 
 const props = defineProps({
   id: { type: String, required: true },
@@ -14,12 +13,15 @@ const isActive = computed(
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'chat', params: { id } }">
-    <div
-      :class="{ 'bg-neutral-300': isActive, 'hover:bg-neutral-200': !isActive }"
-      class="flex items-center justify-between my-2 px-3 py-2 rounded-xl cursor-pointer transition-colors"
-    >
-      <span class="text-sm">{{ title }}</span>
+  <div
+    :class="{ 'bg-neutral-300': isActive, 'hover:bg-neutral-200': !isActive }"
+    class="flex items-center justify-between my-2 px-3 py-2 rounded-xl cursor-pointer transition-colors"
+    @click="() => router.push({ name: 'chat', params: { id } })"
+  >
+    <div class="w-full overflow-hidden text-ellipsis">
+      <span class="text-sm text-nowrap break-keep select-none">
+        {{ title }}
+      </span>
     </div>
-  </RouterLink>
+  </div>
 </template>

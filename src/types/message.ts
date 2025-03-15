@@ -5,4 +5,5 @@ export type Messages = Message[];
 export type Message = {
   content: Ref<string> | string;
   role: 'assistant' | 'user' | 'system';
+  created_at?: string;
 };

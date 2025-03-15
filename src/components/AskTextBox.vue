@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import BaseIcon from '@/components/BaseIcon.vue';
 import TextBox from '@/components/TextBox.vue';
-import { mdiArrowUp } from '@mdi/js';
+import { mdiArrowUp, mdiLoading } from '@mdi/js';
 import { ref } from 'vue';
 
 const emit = defineEmits(['submit']);
@@ -13,7 +13,7 @@ defineProps({
     type: String,
     default: ''
   },
-  disabled: {
+  loading: {
     type: Boolean,
     default: false
   }
@@ -29,8 +29,9 @@ defineExpose({ focus: () => textBox.value.focus() });
     <TextBox
       ref="textBox"
       v-model="model"
+      accept-return
       :placeholder="placeholder"
-      :disabled="disabled"
+      :disabled="loading"
       class="disabled:cursor-not-allowed"
       @submit="() => emit('submit')"
     />
@@ -39,11 +40,12 @@ defineExpose({ focus: () => textBox.value.focus() });
       <button
         type="button"
         title="发送"
-        :disabled="disabled"
+        :disabled="loading"
         class="w-10 h-10 text-center transition-colors rounded-full bg-gray-200 enabled:hover:bg-gray-300 enabled:active:bg-gray-400 flex items-center justify-center disabled:cursor-not-allowed"
         @click="() => emit('submit')"
       >
-        <BaseIcon :path="mdiArrowUp" size="30" />
+        <BaseIcon v-if="!loading" :path="mdiArrowUp" size="30" />
+        <BaseIcon v-else :path="mdiLoading" size="30" class="animate-spin" />
       </button>
     </div>
   </div>
