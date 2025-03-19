@@ -1,4 +1,3 @@
-import { useAccountStore } from '@/stores/account.ts';
 import {
   createRouter,
   createWebHistory,
@@ -9,11 +8,7 @@ const name = '智能辅导员';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect() {
-      console.log(useAccountStore().logined());
-
-      return useAccountStore().logined() ? { name: 'new' } : { name: 'login' };
-    }
+    redirect: { name: 'new' }
   },
   {
     name: 'new',
@@ -28,14 +23,14 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '聊天' }
   },
   {
-    name: 'account',
-    path: '/account',
-    component: () => import('@/views/AccountView.vue'),
+    name: 'user',
+    path: '/user',
+    component: () => import('@/views/UserInfoView.vue'),
     meta: { title: '个人信息' }
   },
   {
     name: 'login',
-    path: '/account/login',
+    path: '/user/login',
     component: () => import('@/views/LoginView.vue'),
     meta: { title: '登录' }
   },

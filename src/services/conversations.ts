@@ -1,9 +1,11 @@
-import { Messages } from '@/types/message.ts';
-import { Axios } from 'axios';
-import { reactive, Ref, ref } from 'vue';
-
-const client = new Axios();
-const map = new Map<string, IConversation>();
+import {
+  ensureSuccess,
+  getConversationHistory,
+  getConversations
+} from '@/services/requests.ts';
+import { useUserStore } from '@/stores/user.ts';
+import { type Messages } from '@/types/message.ts';
+import { reactive, type Ref, ref } from 'vue';
 
 export async function createNewConversation(
   prompt: string
@@ -21,21 +23,29 @@ export async function createNewConversation(
   const reply = ref('');
   conversation.history.push({ content: reply, role: 'assistant' });
 
-  readAsStreamResponse(response, reply); // don't wait for completion
+  readResponseAsReplyStream(response, reply); // don't wait for completion
 
   return conversation;
 }
 
 export async function getConversation(id: string): Promise<IConversation> {
-  if (map.has(id)) {
-    return map.get(id);
+  const conversation = (await getConversations(useUserStore().id)).find(
+    (c) => c.id === id
+  );
+
+  if (!conversation) {
+    throw new Error('Conversation not found');
   }
 
-  const conversation = new Conversation(id);
-  return conversation;
+  const iconversation = new Conversation(id, await getConversationHistory(id));
+  iconversation.createdAt = new Date(conversation.created_at);
+  iconversation.title = conversation.title;
+  return iconversation;
 }
 
 export interface IConversation {
+  title: string | null;
+  createdAt: Date | null;
   readonly id: string;
   readonly history: Messages;
 
@@ -45,6 +55,8 @@ export interface IConversation {
 }
 
 class Conversation implements IConversation {
+  public title: string | null = null;
+  public createdAt: Date | null = null;
   public readonly id: string;
   public readonly history: Messages;
 
@@ -68,24 +80,22 @@ class Conversation implements IConversation {
       body: JSON.stringify({ query: prompt })
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch response from server');
-    }
+    ensureSuccess(response);
 
-    await readAsStreamResponse(response, reply, abortController);
+    await readResponseAsReplyStream(response, reply, abortController);
   }
 
   public async refresh(): Promise<void> {
     this.history.slice(0, this.history.length);
 
-    const messages = (await client.get<Messages>('/api/chats/' + this.id)).data;
+    const messages = await getConversationHistory(this.id);
     for (const message of messages) {
       this.history.push(message);
     }
   }
 }
 
-async function readAsStreamResponse(
+async function readResponseAsReplyStream(
   response: Response,
   ref: Ref<string>,
   abortController?: AbortController
@@ -99,10 +109,10 @@ async function readAsStreamResponse(
       throw new Error('Request aborted');
     }
 
-    const { value, done: _done } = await reader.read();
+    const { value, done } = await reader.read();
     ref.value += decoder.decode(value, { stream: true });
 
-    if (!_done) {
+    if (!done) {
       break;
     }
   }

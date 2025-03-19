@@ -3,27 +3,36 @@ import AnimatedTextBox from '@/components/AnimatedTextBox.vue';
 import BaseIcon from '@/components/BaseIcon.vue';
 import CardBox from '@/components/CardBox.vue';
 import BaseLayout from '@/layouts/BaseLayout.vue';
-import { useAccountStore } from '@/stores/account';
-import { mdiArrowRight } from '@mdi/js';
+import router from '@/router';
+import { useUserStore } from '@/stores/user';
+import { mdiArrowRight, mdiLoading } from '@mdi/js';
 import { reactive } from 'vue';
 
-const accountStore = useAccountStore();
+const userStore = useUserStore();
 const model = reactive({
-  id: accountStore.id,
+  id: userStore.id,
   password: ''
 });
 
 function click() {
-  accountStore.id = model.id;
-  accountStore.password = model.password;
-  accountStore.login();
+  userStore.id = model.id;
+  userStore.password = model.password;
+  userStore.login();
 }
+
+userStore
+  .initializeId()
+  .then(() => {
+    model.id = userStore.id;
+    router.push((router.currentRoute.value.query.redirect as string) || '/');
+  })
+  .catch((error) => alert(error));
 </script>
 
 <template>
   <BaseLayout hide-aside>
     <div class="flex items-center justify-center h-full flex-grow">
-      <CardBox title="登录">
+      <CardBox v-if="false" title="登录">
         <form>
           <div class="text-sm ml-2 mb-1">ID</div>
           <AnimatedTextBox v-model="model.id" />
@@ -41,6 +50,14 @@ function click() {
           </div>
         </form>
       </CardBox>
+
+      <BaseIcon
+        :path="mdiLoading"
+        class="animate-spin"
+        size="50"
+        w="w-20"
+        h="h-20"
+      />
     </div>
   </BaseLayout>
 </template>

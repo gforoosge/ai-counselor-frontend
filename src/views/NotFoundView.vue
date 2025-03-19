@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import BaseLayout from '@/layouts/BaseLayout.vue';
-import { useAccountStore } from '@/stores/account.ts';
+import { useUserStore } from '@/stores/user';
 
-const accountStore = useAccountStore();
+const userStore = useUserStore();
 const tips = [
   '你好像来到了无人的荒原。',
   '恭喜你解锁隐藏关卡',
@@ -15,7 +15,7 @@ const tips = [
 </script>
 
 <template>
-  <BaseLayout :hide-aside="!accountStore.logined">
+  <BaseLayout :hide-aside="!userStore.logined">
     <div class="flex items-center justify-center h-full flex-grow flex-col">
       <div class="text-4xl mb-5">404 Not found.</div>
       <div class="text-gray-500 text-lg">

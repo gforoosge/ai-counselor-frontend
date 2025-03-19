@@ -5,5 +5,5 @@ import AsideFooterItem from '@/components/AsideFooterItem.vue';
 
 <template>
   <AsideFooterItem to="/chat" :icon="mdiMessagePlusOutline" text="开启新对话" />
-  <AsideFooterItem to="/account" :icon="mdiAccountOutline" text="个人信息" />
+  <AsideFooterItem to="/user" :icon="mdiAccountOutline" text="个人信息" />
 </template>

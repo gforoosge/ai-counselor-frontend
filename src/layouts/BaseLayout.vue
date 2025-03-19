@@ -2,6 +2,7 @@
 import AsideBar from '@/components/AsideBar.vue';
 import BaseIcon from '@/components/BaseIcon.vue';
 import router from '@/router';
+import { useUserStore } from '@/stores/user';
 import { mdiBackburger, mdiForwardburger } from '@mdi/js';
 import { ref, watch } from 'vue';
 
@@ -11,6 +12,17 @@ defineProps({
     default: false
   }
 });
+
+const userStore = useUserStore();
+if (
+  router.currentRoute.value.name !== 'login' &&
+  (!userStore.id || !userStore.logined)
+) {
+  router.push({
+    name: 'login',
+    query: { redirect: router.currentRoute.value.fullPath }
+  });
+}
 
 const isAsideMobileExpanded = ref(false);
 
@@ -44,7 +56,7 @@ watch(router.currentRoute, () => {
     class="bg-black w-screen h-screen fixed top-0 left-0 opacity-50 md:hidden transition-[opacity]"
     :class="{ hidden: !isAsideMobileExpanded }"
     @click="isAsideMobileExpanded = false"
-  />
+  ></div>
 
   <AsideBar
     v-if="!hideAside"

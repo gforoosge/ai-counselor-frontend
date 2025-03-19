@@ -15,16 +15,16 @@ if (!id) {
 const conversation = ref<IConversation>(null);
 const history = computed(() => conversation.value?.history ?? []);
 const prompt = ref('');
-const loading = ref(true);
+const isLoading = ref(true);
 
 getConversation(id as string)
   .then((res) => {
     conversation.value = res;
-    loading.value = false;
+    isLoading.value = false;
   })
   .catch((error) => {
     console.error(error);
-    loading.value = false;
+    isLoading.value = false;
   });
 
 async function submit() {
@@ -37,11 +37,11 @@ async function submit() {
   prompt.value = '';
 
   try {
-    loading.value = true;
+    isLoading.value = true;
     await conversation.value.chat(t);
   } catch (error) {}
 
-  loading.value = false;
+  isLoading.value = false;
 }
 </script>
 
@@ -51,7 +51,7 @@ async function submit() {
     <div class="h-60"></div>
     <AskTextBox
       v-model="prompt"
-      :loading="loading"
+      :loading="isLoading"
       class="bottom-0 fixed mb-10 self-center"
       placeholder="向我提问..."
       @submit="submit"
