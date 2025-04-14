@@ -3,7 +3,7 @@ import AskSuggestions from '@/components/AskSuggestions.vue';
 import AskTextBox from '@/components/AskTextBox.vue';
 import BaseLayout from '@/layouts/BaseLayout.vue';
 import router from '@/router';
-import { createNewConversation } from '@/services/conversations';
+import manager from '@/services/chat/manager.ts';
 import { ref } from 'vue';
 
 const text = ref('');
@@ -16,8 +16,11 @@ async function submit() {
 
   try {
     disabled.value = true;
-    const conversation = await createNewConversation(text.value);
-    router.push({ name: 'ChatView', params: { id: conversation.id } });
+
+    const chat = await manager.create();
+    router.push({ name: 'ChatView', params: { id: chat.info.id } });
+
+    chat.complete(text.value);
   } catch (error) {
     console.error(error);
   }

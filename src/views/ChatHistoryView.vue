@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import AskTextBox from '@/components/AskTextBox.vue';
-import ChatConversation from '@/components/ChatConversation.vue';
+import ChatConversation from '@/components/ChatHistory.vue';
 import BaseLayout from '@/layouts/BaseLayout.vue';
 import router from '@/router';
-import { IConversation, getConversation } from '@/services/conversations';
+import manager from '@/services/chat/manager';
+import { IChat } from '@/types/chat';
 import { computed, ref } from 'vue';
 
 const id = router.currentRoute.value.params.id;
@@ -12,14 +13,15 @@ if (!id) {
   router.push({ name: 'new' });
 }
 
-const conversation = ref<IConversation>(null);
-const history = computed(() => conversation.value?.history ?? []);
+const chat = ref<IChat>(null);
+const history = computed(() => chat.value?.history ?? []);
 const prompt = ref('');
 const isLoading = ref(true);
 
-getConversation(id as string)
+manager
+  .getChatById(id as string)
   .then((res) => {
-    conversation.value = res;
+    chat.value = res;
     isLoading.value = false;
   })
   .catch((error) => {
@@ -38,7 +40,7 @@ async function submit() {
 
   try {
     isLoading.value = true;
-    await conversation.value.chat(t);
+    await chat.value.complete(t);
   } catch (error) {}
 
   isLoading.value = false;

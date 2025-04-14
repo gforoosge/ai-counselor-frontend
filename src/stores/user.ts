@@ -1,10 +1,10 @@
 import router from '@/router/index.ts';
-import { signUp } from '@/services/requests.ts';
+import { signUp } from '@/services/apis/user.ts';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useUserStore = defineStore('user', () => {
-  const id = ref(localStorage.getItem('user.id') || '');
+  const id = ref(localStorage.getItem('user.id') || '111');
 
   if (!id.value) {
     initializeId();

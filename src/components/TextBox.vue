@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 
 defineEmits(['submit']);
+
 const model = defineModel({ type: String, default: '' });
 const props = defineProps({
   placeholder: { type: String, default: '' },

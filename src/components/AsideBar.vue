@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import AsiderFooter from '@/components/AsideFooter.vue';
 import HistoryItem from '@/components/HistoryItem.vue';
-import { getConversations } from '@/services/requests';
-import { useUserStore } from '@/stores/user';
-import { Conversations } from '@/types/conversation';
+import manager from '@/services/chat/manager';
+import { ChatInfo } from '@/types/chat';
 import { ref } from 'vue';
 
-const history = ref<Conversations>([
+const history = ref<ChatInfo[]>([
   {
     id: '114514',
     title: '示例对话1',
@@ -19,9 +18,8 @@ const history = ref<Conversations>([
   }
 ]);
 const isLoading = ref(true);
-const userStore = useUserStore();
 
-getConversations(userStore.id).then(
+manager.getAllChatInfo().then(
   (data) => {
     history.value = data;
     isLoading.value = false;

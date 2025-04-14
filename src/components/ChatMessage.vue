@@ -46,8 +46,11 @@ const html = computed(() => sanitizeHtml(md.render(typed.value.content)));
       </div>
       <div v-if="!isUser" class="text-gray-500 text-xs m-1">
         <div class="select-none">内容由 AI 生成，请仔细甄别</div>
-        <div class="opacity-0 group-hover:opacity-100 transition-opacity mt-1">
-          {{ new Date().toLocaleString() }}
+        <div
+          v-if="typed.created_at"
+          class="opacity-0 group-hover:opacity-100 transition-opacity mt-1"
+        >
+          {{ typed.created_at?.toLocaleString() }}
         </div>
       </div>
     </div>
