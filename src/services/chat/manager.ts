@@ -1,4 +1,8 @@
-import { createNewChat, getChatHistory } from '@/services/apis/chat.ts';
+import {
+  createNewChat,
+  deleteChat,
+  getChatHistory
+} from '@/services/apis/chat.ts';
 import { getChatInfo } from '@/services/apis/user.ts';
 import { Chat } from '@/services/chat/implementation.ts';
 import { useUserStore } from '@/stores/user.ts';
@@ -29,7 +33,7 @@ async function refreshInfo(): Promise<void> {
     info.set(chatInfo.id, chatInfo);
   }
 
-  for (const [id] of chats.entries()) {
+  for (const id of chats.keys()) {
     if (!info.has(id)) {
       chats.delete(id);
     }
@@ -50,7 +54,7 @@ async function getChatById(
   const chatInfo = info.get(chatId);
 
   if (!chatInfo) {
-    throw new Error('Specific chat not found');
+    throw new Error('未找到指定的对话');
   }
 
   if (!chats.has(chatId)) {
@@ -66,15 +70,22 @@ async function create(): Promise<IChat> {
   const userId = useUserStore().id;
   const chatId = await createNewChat(userId);
 
-  refreshInfo();
+  await refreshInfo();
 
-  const chat = new Chat({ id: chatId, created_at: new Date().toISOString() });
+  const chat = new Chat({ id: chatId, created_time: new Date().toISOString() });
   chats.set(chatId, chat);
   return chat;
+}
+
+async function remove(chatId: string): Promise<void> {
+  await deleteChat(chatId);
+  chats.delete(chatId);
+  info.delete(chatId);
 }
 
 export default {
   getAllChatInfo,
   getChatById,
-  create
+  create,
+  remove
 };

@@ -13,7 +13,7 @@ export class Chat implements IChat {
   ) {
     this.info = {
       title: '新对话',
-      created_at: new Date().toISOString(),
+      created_time: new Date().toISOString(),
       ...info
     };
     this.history = reactive(history);
@@ -27,14 +27,14 @@ export class Chat implements IChat {
     this.history.push({
       content: prompt,
       role: 'user',
-      created_at: new Date().toISOString()
+      created_time: new Date().toISOString()
     });
 
     const reply = ref('');
     this.history.push({
       content: reply,
       role: 'assistant',
-      created_at: new Date().toISOString()
+      created_time: new Date().toISOString()
     });
 
     await completeChat(this.info.id, prompt, reply, abortController);

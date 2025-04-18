@@ -2,7 +2,7 @@ import { Messages } from '@/types/message.ts';
 
 export type ChatInfo = {
   id: string;
-  created_at: string;
+  created_time: string;
   title: string;
 };
 

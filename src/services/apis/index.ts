@@ -1,6 +1,6 @@
 import { useUserStore } from '@/stores/user.ts';
 import { Messages } from '@/types/message.ts';
-import { Axios, isAxiosError } from 'axios';
+import axios, { isAxiosError } from 'axios';
 
 type RequestError = {
   detail: {
@@ -10,10 +10,17 @@ type RequestError = {
   }[];
 };
 
-export const client = new Axios({
+export const client = axios.create({
   adapter: window.fetch ? 'fetch' : 'xhr',
   baseURL: '/api'
 });
+
+client.defaults.headers.post =
+  client.defaults.headers.put =
+  client.defaults.headers.delete =
+    {
+      'Content-Type': 'application/json'
+    };
 
 client.interceptors.response.use(undefined, async (error) => {
   if (!isAxiosError(error) || !error.response?.data) {

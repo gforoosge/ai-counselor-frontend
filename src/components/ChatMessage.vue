@@ -22,7 +22,7 @@ const isUser = typed.value.role === 'user';
 const md = new MarkdownIt({ html: true })
   .use(MarkdownItTasklists)
   .use(MarkdownItFootnote);
-const html = computed(() => sanitizeHtml(md.render(typed.value.content)));
+const html = computed(() => sanitizeHtml(md.render(typed.value.content || '')));
 </script>
 
 <template>
@@ -44,13 +44,15 @@ const html = computed(() => sanitizeHtml(md.render(typed.value.content)));
         <span v-if="isUser"> {{ typed.content }}</span>
         <span v-else class="markdown-body" v-html="html"></span>
       </div>
-      <div v-if="!isUser" class="text-gray-500 text-xs m-1">
-        <div class="select-none">内容由 AI 生成，请仔细甄别</div>
+      <div class="text-gray-500 text-xs ml-2">
+        <div v-if="!isUser" class="select-none mb-1">
+          内容由 AI 生成，请仔细甄别
+        </div>
         <div
-          v-if="typed.created_at"
-          class="opacity-0 group-hover:opacity-100 transition-opacity mt-1"
+          v-if="typed.created_time"
+          class="transition-opacity opacity-0 group-hover:opacity-100"
         >
-          {{ typed.created_at?.toLocaleString() }}
+          {{ new Date(typed.created_time).toLocaleString() }}
         </div>
       </div>
     </div>

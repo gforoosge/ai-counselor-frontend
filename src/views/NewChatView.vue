@@ -5,7 +5,9 @@ import BaseLayout from '@/layouts/BaseLayout.vue';
 import router from '@/router';
 import manager from '@/services/chat/manager.ts';
 import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const text = ref('');
 const disabled = ref(false);
 
@@ -18,11 +20,12 @@ async function submit() {
     disabled.value = true;
 
     const chat = await manager.create();
-    router.push({ name: 'ChatView', params: { id: chat.info.id } });
+    router.push({ name: 'chat', params: { id: chat.info.id } });
 
     chat.complete(text.value);
   } catch (error) {
     console.error(error);
+    toast.error('创建对话失败，请稍后再试。');
   }
   disabled.value = false;
 }

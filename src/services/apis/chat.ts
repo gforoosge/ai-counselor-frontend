@@ -3,8 +3,10 @@ import { Messages } from '@/types/message.ts';
 import { Ref } from 'vue';
 
 export async function getChatHistory(id: string): Promise<Messages> {
-  const response = await client.get<Messages>('/chats/' + id);
-  return response.data;
+  const response = await client.get<{ response: Messages }>(
+    '/chats/' + id + '/messages'
+  );
+  return response.data.response;
 }
 
 export async function createNewChat(userId: string): Promise<string> {
@@ -13,6 +15,10 @@ export async function createNewChat(userId: string): Promise<string> {
   });
 
   return response.data.chat_id;
+}
+
+export async function deleteChat(chatId: string) {
+  await client.delete(`/chats/${chatId}/messages`);
 }
 
 export async function getMessages(chatId: string): Promise<Messages> {
@@ -29,7 +35,7 @@ export async function completeChat(
   reply: Ref<string>,
   abortController?: AbortController
 ): Promise<void> {
-  const response = await fetch('/api/chat/' + id, {
+  const response = await fetch('/api/chats/' + id, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query: prompt })
@@ -61,7 +67,7 @@ async function readTextStream(
     const { value, done } = await reader.read();
     ref.value += decoder.decode(value, { stream: true });
 
-    if (!done) {
+    if (done) {
       break;
     }
   }

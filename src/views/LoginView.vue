@@ -7,7 +7,9 @@ import router from '@/router';
 import { useUserStore } from '@/stores/user';
 import { mdiArrowRight, mdiLoading } from '@mdi/js';
 import { reactive } from 'vue';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const userStore = useUserStore();
 const model = reactive({
   id: userStore.id,
@@ -26,7 +28,7 @@ userStore
     model.id = userStore.id;
     router.push((router.currentRoute.value.query.redirect as string) || '/');
   })
-  .catch((error) => alert(error));
+  .catch((error) => toast.error('登录失败。' + error));
 </script>
 
 <template>

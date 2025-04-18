@@ -4,28 +4,23 @@ import HistoryItem from '@/components/HistoryItem.vue';
 import manager from '@/services/chat/manager';
 import { ChatInfo } from '@/types/chat';
 import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
-const history = ref<ChatInfo[]>([
-  {
-    id: '114514',
-    title: '示例对话1',
-    created_at: ''
-  },
-  {
-    id: '114515',
-    title: '示例对话2',
-    created_at: ''
-  }
-]);
+const history = ref<ChatInfo[]>([]);
 const isLoading = ref(true);
+const toast = useToast();
 
-manager.getAllChatInfo().then(
-  (data) => {
-    history.value = data;
-    isLoading.value = false;
-  },
-  () => (isLoading.value = false)
-);
+updateHistory();
+
+async function updateHistory() {
+  try {
+    history.value = await manager.getAllChatInfo();
+  } catch (error) {
+    console.error(error);
+    toast.error('加载对话记录失败。' + error);
+  }
+  isLoading.value = false;
+}
 </script>
 
 <template>
@@ -35,7 +30,7 @@ manager.getAllChatInfo().then(
     <div class="text-xl font-bold mb-5 select-none">对话记录</div>
 
     <div v-if="isLoading" class="h-full text-sm">
-      <span class="text-gray-400">加载中...</span>
+      <span class="text-gray-400 select-none">加载中...</span>
     </div>
 
     <div v-else-if="history.length" class="h-full overflow-y-auto -ml-2">
@@ -44,10 +39,11 @@ manager.getAllChatInfo().then(
         :id="item.id"
         :key="index"
         :title="item.title"
+        @delete="updateHistory"
       />
     </div>
 
-    <div v-else class="h-full text-sm">
+    <div v-else class="h-full text-sm select-none">
       <span class="text-gray-400">暂无对话记录</span>
     </div>
 

@@ -4,11 +4,9 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useUserStore = defineStore('user', () => {
-  const id = ref(localStorage.getItem('user.id') || '111');
+  const id = ref(localStorage.getItem('user.id'));
 
-  if (!id.value) {
-    initializeId();
-  } else {
+  if (id.value) {
     localStorage.setItem('user.id', id.value);
   }
 
